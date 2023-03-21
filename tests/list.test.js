@@ -5,23 +5,6 @@ test("dummy returns length", () => {
   expect(listHelper.dummy(blogs)).toBe(blogs.length)
 })
 
-describe("some advanced tests", () => {
-  test("the most liked blog", () => {
-    expect(listHelper.favoriteBlog(listHelper.exampleBlogs)).toEqual({
-      title: "Canonical string reduction",
-      author: "Edsger W. Dijkstra",
-      likes: 12
-    })
-  })
-
-  test("who has most blogs", () => {
-    expect(listHelper.mostBlogs(listHelper.exampleBlogs)).toEqual({
-      author: "Robert C. Martin",
-      blogs: 3
-    })
-  })
-})
-
 describe("total likes", () => {
   test("of empty list is zero", () => {
     const blogs = []
@@ -44,5 +27,29 @@ describe("total likes", () => {
 
   test("of a bigger list is calculated right", () => {
     expect(listHelper.totalLikes(listHelper.exampleBlogs)).toBe(36)
+  })
+})
+
+describe("some advanced tests", () => {
+  test("the most liked blog", () => {
+    expect(listHelper.favoriteBlog(listHelper.exampleBlogs)).toEqual({
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      likes: 12
+    })
+  })
+
+  test("who has most blogs", () => {
+    expect(listHelper.mostBlogs(listHelper.exampleBlogs)).toEqual({
+      author: "Robert C. Martin",
+      blogs: 3
+    })
+  })
+
+  test("who has most likes", () => {
+    expect(listHelper.mostLikes(listHelper.exampleBlogs)).toEqual({
+      author: "Edsger W. Dijkstra",
+      likes: 17
+    })
   })
 })
