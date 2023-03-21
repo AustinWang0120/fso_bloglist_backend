@@ -64,6 +64,17 @@ test("able to create a new blog", async () => {
   expect(titles).toContain(newBlog.title)
 })
 
+test("default likes is 0", async () => {
+  const newBlog = {
+    title: "Forth blog",
+    author: "Supertest",
+    url: "https://supertest.com"
+  }
+  const res = await api.post("/api/blogs").send(newBlog)
+  const resultBlog = await Blog.findById(res.body.id)
+  expect(resultBlog.likes).toBe(0)
+})
+
 afterAll(async() => {
   await mongoose.connection.close()
 })
