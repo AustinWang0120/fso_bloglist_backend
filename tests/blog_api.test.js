@@ -75,6 +75,28 @@ test("default likes is 0", async () => {
   expect(resultBlog.likes).toBe(0)
 })
 
+test("blog without title or url cannot be added", async () => {
+  const blogWithoutTitle = {
+    author: "Supertest",
+    url: "https://supertest.com",
+    likes: 100
+  }
+  await api
+    .post("/api/blogs")
+    .send(blogWithoutTitle)
+    .expect(400)
+  
+  const blogWithoutUrl = {
+    title: "Fifth blog",
+    author: "Supertest",
+    likes: 100
+  }
+  await api
+    .post("/api/blogs")
+    .send(blogWithoutUrl)
+    .expect(400)
+})
+
 afterAll(async() => {
   await mongoose.connection.close()
 })
