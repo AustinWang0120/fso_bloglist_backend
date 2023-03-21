@@ -46,6 +46,24 @@ test("able to convert _id to id", async () => {
   expect(firstBlog.__v).not.toBeDefined()
 })
 
+test("able to create a new blog", async () => {
+  const newBlog = {
+    title: "Forth blog",
+    author: "Supertest",
+    url: "https://supertest.com",
+    likes: 100
+  }
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/)
+  const blogsAtEnd = await Blog.find({})
+  expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+  const titles = blogsAtEnd.map((blog) => (blog.title))
+  expect(titles).toContain(newBlog.title)
+})
+
 afterAll(async() => {
   await mongoose.connection.close()
 })
