@@ -38,6 +38,14 @@ test("able to return correct amount of blogs", async () => {
   expect(res.body).toHaveLength(initialBlogs.length)
 })
 
+test("able to convert _id to id", async () => {
+  const res = await api.get("/api/blogs")
+  const firstBlog = res.body[0]
+  expect(firstBlog.id).toBeDefined()
+  expect(firstBlog._id).not.toBeDefined()
+  expect(firstBlog.__v).not.toBeDefined()
+})
+
 afterAll(async() => {
   await mongoose.connection.close()
 })
