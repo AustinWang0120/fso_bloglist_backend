@@ -5,12 +5,19 @@ test("dummy returns length", () => {
   expect(listHelper.dummy(blogs)).toBe(blogs.length)
 })
 
-describe("most liked", () => {
+describe("some advanced tests", () => {
   test("the most liked blog", () => {
     expect(listHelper.favoriteBlog(listHelper.exampleBlogs)).toEqual({
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
       likes: 12
+    })
+  })
+
+  test("who has most blogs", () => {
+    expect(listHelper.mostBlogs(listHelper.exampleBlogs)).toEqual({
+      author: "Robert C. Martin",
+      blogs: 3
     })
   })
 })
