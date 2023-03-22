@@ -97,6 +97,34 @@ test("blog without title or url cannot be added", async () => {
     .expect(400)
 })
 
+test("able to delete a blog", async () => {
+  const blogsAtStart = await Blog.find({})
+  const firstBlogId = blogsAtStart[0]._id.toString()
+  await api
+    .delete(`/api/blogs/${firstBlogId}`)
+    .expect(204)
+  const blogsAtEnd = await Blog.find({})
+  expect(blogsAtEnd).toHaveLength(initialBlogs.length - 1)
+  const invalidBlog = await Blog.findById(firstBlogId)
+  expect(invalidBlog).toBeNull()
+})
+
+test("able to update a blog", async () => {
+  const blogsAtStart = await Blog.find({})
+  const firstBlog = blogsAtStart[0]
+  const newBlog = {
+    title: "New Blog",
+    author: "Austin Wang",
+    url: "https://404.com",
+    likes: 0
+  }
+  await api.put(`/api/blogs/${firstBlog._id.toString()}`).send(newBlog).expect(200)
+  const blogsAtEnd = await Blog.find({})
+  const titles = blogsAtEnd.map((blog) => (blog.title))
+  expect(titles).toContain(newBlog.title)
+  expect(titles).not.toContain(firstBlog.title)
+})
+
 afterAll(async() => {
   await mongoose.connection.close()
 })

@@ -20,4 +20,23 @@ blogsRouter.post("/", async (req, res) => {
   res.status(201).json(savedBlog)
 })
 
+blogsRouter.put("/:id", async (req, res) => {
+  const body = req.body
+
+  const blog = {
+    title: body.title,
+    author: body.author || "Anonymous",
+    url: body.url,
+    likes: body.likes || 0
+  }
+
+  const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true, runValidators: true, context: "query" })
+  res.json(updatedBlog)
+})
+
+blogsRouter.delete("/:id", async (req, res) => {
+  await Blog.findByIdAndRemove(req.params.id)
+  res.status(204).end()
+})
+
 module.exports = blogsRouter
