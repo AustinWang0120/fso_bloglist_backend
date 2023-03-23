@@ -1,3 +1,6 @@
+const User = require("../models/user")
+const jwt = require("jsonwebtoken")
+
 /* eslint-disable no-unused-vars */
 const tokenExtractor = (req, res, next) => {
   const authorization = req.headers.authorization
@@ -5,6 +8,20 @@ const tokenExtractor = (req, res, next) => {
     req.token = authorization.substring(7)
   } else {
     req.token = null
+  }
+  next()
+}
+
+const userExtractor = async (req, res, next) => {
+  const token = req.token
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (decodedToken.id) {
+    const user = await User.findById(decodedToken.id)
+    req.user = user
+  } else {
+    return res.status(401).json({
+      error: "invalid token"
+    })
   }
   next()
 }
@@ -36,6 +53,6 @@ const errorHandler = (error, req, res, next) => {
 }
 
 module.exports = {
-  tokenExtractor, unknownEndpoint, errorHandler
+  tokenExtractor, userExtractor, unknownEndpoint, errorHandler
 }
 /* eslint-disable no-unused-vars */

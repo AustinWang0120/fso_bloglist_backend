@@ -1,7 +1,5 @@
 const blogsRouter = require("express").Router()
 const Blog = require("../models/blog")
-const User = require("../models/user")
-const jwt = require("jsonwebtoken")
 
 blogsRouter.get("/", async (req, res) => {
   const blogs = await Blog.find({}).populate({
@@ -13,16 +11,7 @@ blogsRouter.get("/", async (req, res) => {
 
 blogsRouter.post("/", async (req, res) => {
   const body = req.body
-  const token = req.token
-
-  // find the matched user
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return res.status(401).json({
-      error: "invalid token"
-    })
-  }
-  const user = await User.findById(decodedToken.id)
+  const user = req.user
 
   const blog = new Blog({
     title: body.title,
@@ -58,15 +47,10 @@ blogsRouter.put("/:id", async (req, res) => {
 
 blogsRouter.delete("/:id", async (req, res) => {
   // only the creator can delete the blog
-  const token = req.token
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return res.status(401).json({
-      error: "invalid token"
-    })
-  }
+  const user = req.user
+
   const blog = await Blog.findById(req.params.id)
-  if (!(blog.user.toString() === decodedToken.id)) {
+  if (!(blog.user.toString() === user.id.toString())) {
     return res.status(401).json({
       error: "only the creator can delete the blog"
     })
