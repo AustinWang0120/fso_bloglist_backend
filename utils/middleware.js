@@ -1,4 +1,15 @@
-const unknownEndpoint = (req, res) => {
+/* eslint-disable no-unused-vars */
+const tokenExtractor = (req, res, next) => {
+  const authorization = req.headers.authorization
+  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+    req.token = authorization.substring(7)
+  } else {
+    req.token = null
+  }
+  next()
+}
+
+const unknownEndpoint = (req, res, next) => {
   res.status(404).send({
     error: "unknown endpoint"
   })
@@ -25,5 +36,6 @@ const errorHandler = (error, req, res, next) => {
 }
 
 module.exports = {
-  unknownEndpoint, errorHandler
+  tokenExtractor, unknownEndpoint, errorHandler
 }
+/* eslint-disable no-unused-vars */
