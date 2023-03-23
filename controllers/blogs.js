@@ -1,6 +1,15 @@
 const blogsRouter = require("express").Router()
 const Blog = require("../models/blog")
 const User = require("../models/user")
+const jwt = require("jsonwebtoken")
+
+const getTokenFrom = (req) => {
+  const authorization = req.headers.authorization
+  if (authorization && authorization.startsWith("Bearer ")) {
+    return authorization.replace("Bearer ", "")
+  }
+  return null
+}
 
 blogsRouter.get("/", async (req, res) => {
   const blogs = await Blog.find({}).populate({
@@ -13,25 +22,30 @@ blogsRouter.get("/", async (req, res) => {
 blogsRouter.post("/", async (req, res) => {
   const body = req.body
 
-  // find a random user to be its creator
-  const randomUser = await User.findOne().skip(Math.floor(Math.random() * await User.countDocuments()))
-  console.log("random user", randomUser)
-  console.log("random user id type", typeof randomUser._id)
+  // find the matched user
+  const token = getTokenFrom(req)
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!decodedToken.id) {
+    return res.status(401).json({
+      error: "invalid token"
+    })
+  }
+  const user = await User.findById(decodedToken.id)
 
   const blog = new Blog({
     title: body.title,
     author: body.author || "Anonymous",
     url: body.url,
     likes: body.likes || 0,
-    user: randomUser._id
+    user: user._id
   })
 
   const savedBlog = await blog.save()
 
   // update randomUser's blogs
-  console.log("randomUser type", randomUser.constructor.name)
-  randomUser.blogs = randomUser.blogs.concat(savedBlog)
-  await randomUser.save()
+  console.log("randomUser type", user.constructor.name)
+  user.blogs = user.blogs.concat(savedBlog)
+  await user.save()
 
   res.status(201).json(savedBlog)
 })

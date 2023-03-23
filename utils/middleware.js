@@ -15,6 +15,11 @@ const errorHandler = (error, req, res, next) => {
     return res.status(400).send({
       error: error.message
     })
+  } else {
+    res.status(500).send({
+      errorName: error.name,
+      errorMessage: error.message
+    })
   }
   next(error)
 }
