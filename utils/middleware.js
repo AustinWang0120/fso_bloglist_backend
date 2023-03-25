@@ -37,20 +37,24 @@ const errorHandler = (error, req, res, next) => {
 
   if (error.name === "CastError") {
     return res.status(400).send({
-      error: "malformatted id"
+      error: "malformatted id",
+      stack: error.stack
     })
   } else if (error.name === "ValidationError") {
     return res.status(400).send({
-      error: error.message
+      error: error.message,
+      stack: error.stack
     })
   } else if (error.name === "JsonWebTokenError") {
     return res.status(400).send({
-      error: "jwt token must be provided"
+      error: "jwt token must be provided",
+      stack: error.stack
     })
   } else {
     res.status(500).send({
       errorName: error.name,
-      errorMessage: error.message
+      errorMessage: error.message,
+      errorStack: error.stack
     })
   }
   next(error)
