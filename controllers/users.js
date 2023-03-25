@@ -7,11 +7,6 @@ usersRouter.get("/", async (req, res) => {
     path: "blogs",
     select: "title author url likes"
   })
-  console.log("blogs", users[0].blogs, "type", typeof users[0].blogs)
-  users[0].blogs.forEach((blog) => {
-    console.log("type of", typeof blog)
-    console.log("blog:", blog)
-  })
   res.send(users)
 })
 

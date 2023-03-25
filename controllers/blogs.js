@@ -25,7 +25,6 @@ blogsRouter.post("/", middleware.userExtractor, async (req, res) => {
   const savedBlog = await blog.save()
 
   // update user's blogs
-  console.log("randomUser type", user.constructor.name)
   user.blogs = user.blogs.concat(savedBlog)
   await user.save()
 
